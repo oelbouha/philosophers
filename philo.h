@@ -18,31 +18,28 @@
 # include <string.h>
 # include <stdlib.h>
 # include <pthread.h>
+# include <sys/time.h>
 
 
-/*			  structures
-==========================================
+/*			    structures
+==========================================*
 */
-
-typedef struct s_data
-{
-	int		num_of_ph;
-	int		time_to_die;
-	int		time_to_eat;
-	int		time_to_sleep;
-	int		num_of_meals;
-}	t_data;
 
 typedef struct s_philosophers
 {
 	pthread_mutex_t 	*left_fork;
 	pthread_mutex_t 	*right_fork;
 	int					id;
-	t_data				data;
+	int					meals;
+	int					num_of_ph;
+	int					time_to_die;
+	int					time_to_eat;
+	int					time_to_sleep;
+	int					num_of_meals;
 }	t_philosophers;
 
 /*		   	      utils
-=========================================
+=========================================*
 */
 int	ft_atoi(char *str);
 
