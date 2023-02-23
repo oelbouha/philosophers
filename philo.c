@@ -12,6 +12,18 @@
 
 #include "philo.h"
 
+void	ft_sleep(int time)
+{
+	int	i;
+
+	i = time / 10;
+	while (i <= time)
+	{
+		usleep((time / 10) * 1000);
+		i = i + (time / 10);
+	}
+}
+
 void	eat(int id, int time_to_eat)
 {
 	struct timeval current_time;
@@ -20,13 +32,6 @@ void	eat(int id, int time_to_eat)
 	printf("%ld %d is eating\n", (current_time.tv_sec * 1000 +
 		current_time.tv_usec / 1000), id);
 	usleep(time_to_eat * 1000);
-	// int	i = time_to_eat / 10;
-	// while (i <= time_to_eat)
-	// {
-	// 	usleep((time_to_eat / 10) * 1000);
-	// 	i = i + (time_to_eat / 10);
-	// }
-	// printf("count --> %ld, %ld\n", 
 	//(current_time.tv_sec * 1000 + current_time.tv_usec / 1000) - count, (current_time.tv_sec * 1000 + current_time.tv_usec / 1000));
 }
 
@@ -36,8 +41,8 @@ void	*routine(void *arg)
 	struct timeval current_time;
 	static long		count;
 	static int		count_meals;
-	int		i;
 	static int		check;
+	int		i;
 
 	check = 0;
 	i = 0;
@@ -55,6 +60,7 @@ void	*routine(void *arg)
 			if ((current_time.tv_sec * 1000 + current_time.tv_usec / 1000) - count >= p->time_to_die)
 				check = 1;
 			// printf("check ==> %d id ==> %d\n", check, p->id);
+			// printf("count ==> %ld\n", (current_time.tv_sec * 1000 + current_time.tv_usec / 1000) - count);
 			if (check == 0)
 			{
 				gettimeofday(&current_time, NULL);
@@ -64,10 +70,10 @@ void	*routine(void *arg)
 			}
 			pthread_mutex_unlock(p->right_fork);
 			pthread_mutex_unlock(p->left_fork);
+			if (p->meals && (count_meals == p->meals * p->num_of_ph))
+					check = 3;
 			if (check == 0)
 			{
-				if (p->meals && (count_meals == p->meals * p->num_of_ph))
-						exit (1);
 				gettimeofday(&current_time, NULL);
 				printf("%ld %d is sleeping\n", (current_time.tv_sec * 1000 + current_time.tv_usec / 1000), p->id);
 				usleep(p->time_to_sleep * 1000);
@@ -81,7 +87,7 @@ void	*routine(void *arg)
 			printf("%ld %d died\n", (current_time.tv_sec * 1000 + current_time.tv_usec / 1000), p->id);
 			return (NULL);
 		}
-		if (check == 1)
+		if (check == 1 || check == 3)
 			return (NULL);
 	}
 	return (NULL);
