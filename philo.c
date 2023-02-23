@@ -6,38 +6,83 @@
 /*   By: oelbouha <oelbouha@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/13 20:10:01 by oelbouha          #+#    #+#             */
-/*   Updated: 2023/02/13 20:10:02 by oelbouha         ###   ########.fr       */
+/*   Updated: 2023/02/23 14:35:33 by oelbouha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
+void	eat(int id, int time_to_eat)
+{
+	struct timeval current_time;
+
+	gettimeofday(&current_time, NULL);
+	printf("%ld %d is eating\n", (current_time.tv_sec * 1000 +
+		current_time.tv_usec / 1000), id);
+	usleep(time_to_eat * 1000);
+	// int	i = time_to_eat / 10;
+	// while (i <= time_to_eat)
+	// {
+	// 	usleep((time_to_eat / 10) * 1000);
+	// 	i = i + (time_to_eat / 10);
+	// }
+	// printf("count --> %ld, %ld\n", 
+	//(current_time.tv_sec * 1000 + current_time.tv_usec / 1000) - count, (current_time.tv_sec * 1000 + current_time.tv_usec / 1000));
+}
+
 void	*routine(void *arg)
 {
 	t_philosophers *p = (t_philosophers *)arg;
 	struct timeval current_time;
-	useconds_t	t_to_eat;
-	useconds_t	t_to_sleep;
+	static long		count;
+	static int		count_meals;
+	int		i;
+	static int		check;
 
-	t_to_eat = p->time_to_eat * 1000;
-	t_to_sleep = p->time_to_sleep * 1000;
-	int i = 0;
-	while (++i <= 2)
+	check = 0;
+	i = 0;
+	if (p->id % 2 == 0)
+		usleep(5);
+	while (1)
 	{
-		pthread_mutex_lock(p->right_fork);
-		pthread_mutex_lock(p->left_fork);
-		gettimeofday(&current_time, NULL);
-		printf("%ld %d  has taken a fork\n", (current_time.tv_sec * 1000 + current_time.tv_usec / 1000), p->id);
-		gettimeofday(&current_time, NULL);
-		printf("%ld %d  is eating\n", (current_time.tv_sec * 1000 + current_time.tv_usec / 1000), p->id);
-		usleep(t_to_eat);
-		pthread_mutex_unlock(p->right_fork);
-		pthread_mutex_unlock(p->left_fork);
-		gettimeofday(&current_time, NULL);
-		printf("%ld %d  is sleeping\n", (current_time.tv_sec * 1000 + current_time.tv_usec / 1000), p->id);
-		usleep(t_to_sleep);
-		gettimeofday(&current_time, NULL);
-		printf("%ld %d  is thinking\n", (current_time.tv_sec * 1000 + current_time.tv_usec / 1000), p->id);
+		if (check == 0)
+		{
+			pthread_mutex_lock(p->right_fork);
+			pthread_mutex_lock(p->left_fork);
+			gettimeofday(&current_time, NULL);
+			if (p->id % 2)
+				count = current_time.tv_sec * 1000 + current_time.tv_usec / 1000;
+			if ((current_time.tv_sec * 1000 + current_time.tv_usec / 1000) - count >= p->time_to_die)
+				check = 1;
+			// printf("check ==> %d id ==> %d\n", check, p->id);
+			if (check == 0)
+			{
+				gettimeofday(&current_time, NULL);
+				printf("%ld %d has taken a fork\n", (current_time.tv_sec * 1000 + current_time.tv_usec / 1000), p->id);
+				eat(p->id, p->time_to_eat);
+				count_meals++;
+			}
+			pthread_mutex_unlock(p->right_fork);
+			pthread_mutex_unlock(p->left_fork);
+			if (check == 0)
+			{
+				if (p->meals && (count_meals == p->meals * p->num_of_ph))
+						exit (1);
+				gettimeofday(&current_time, NULL);
+				printf("%ld %d is sleeping\n", (current_time.tv_sec * 1000 + current_time.tv_usec / 1000), p->id);
+				usleep(p->time_to_sleep * 1000);
+				gettimeofday(&current_time, NULL);
+				printf("%ld %d is thinking\n", (current_time.tv_sec * 1000 + current_time.tv_usec / 1000), p->id);
+			}
+		}
+		if (check == 1 && p->id % 2 == 0)
+		{
+			gettimeofday(&current_time, NULL);
+			printf("%ld %d died\n", (current_time.tv_sec * 1000 + current_time.tv_usec / 1000), p->id);
+			return (NULL);
+		}
+		if (check == 1)
+			return (NULL);
 	}
 	return (NULL);
 }
@@ -53,35 +98,27 @@ void	create_threads(t_philosophers *p)
 	i = -1;
 	while (++i < p->num_of_ph)
 		pthread_mutex_init(&forks[i], NULL);	
-	// printf("meals ---> %d\n", p->num_of_meals);
-	// printf("sleep ---> %d\n", p->time_to_sleep);
-	// printf("time to die ---> %d\n", p->time_to_die);
 	i = 0;
 	int j = 0;
 	while (++i <= p->num_of_ph)
 	{
 		philosophers[i].id = i;
 		philosophers[i].left_fork = &forks[j];
+		philosophers[i].right_fork = &forks[(j + 1) % p->num_of_ph];
 		philosophers[i].meals = p->num_of_meals;
+		philosophers[i].num_of_ph = p->num_of_ph;
 		philosophers[i].time_to_die = p->time_to_die;
 		philosophers[i].time_to_eat = p->time_to_eat;
 		philosophers[i].time_to_sleep = p->time_to_sleep;
-		philosophers[i].right_fork = &forks[(j + 1) % p->num_of_ph];
 		if (pthread_create(th + i, NULL, &routine, &philosophers[i]) != 0)
-		{
-			perror("philo");
 			return ;
-		}
 		j++;
 	}
 	i = -1;
 	while (++i < p->num_of_ph)
 	{
 		if (pthread_join(th[i], NULL) < 0)
-		{
-			perror("philo");
 			return ;
-		}
 	}
 }
 
