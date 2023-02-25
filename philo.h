@@ -14,6 +14,7 @@
 # define PHILO_H
 
 # include <stdio.h>
+# include <stdlib.h>
 # include <unistd.h>
 # include <string.h>
 # include <stdlib.h>
@@ -29,6 +30,8 @@ typedef struct s_philosophers
 {
 	pthread_mutex_t 	*left_fork;
 	pthread_mutex_t 	*right_fork;
+	pthread_mutex_t 	*c;
+	long				count;
 	int					id;
 	int					meals;
 	int					num_of_ph;
