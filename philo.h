@@ -26,6 +26,7 @@
 ==========================================*
 */
 
+
 typedef struct s_philosophers
 {
 	pthread_mutex_t 	*left_fork;

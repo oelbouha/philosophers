@@ -12,18 +12,6 @@
 
 #include "philo.h"
 
-void	ft_sleep(int time)
-{
-	int	i;
-
-	i = time / 10;
-	while (i <= time)
-	{
-		usleep((time / 10) * 1000);
-		i = i + (time / 10);
-	}
-}
-
 void	is_sleeping(int id, int time_to_sleep)
 {
 	struct timeval current_time;
@@ -45,15 +33,19 @@ void	is_eating(int id, int time_to_eat)
 	usleep(time_to_eat * 1000);
 }
 
-/*
-	1 3 go to eat // start eating at 0
-	0 2 wait
-	after 60 ms // 0 2 check if they can eat
-	if yes
-	0 2 go to eat // start eating at 60
-	at the same time 1 3 go to sleep
-	once therey are awake they check if they can eat
-*/
+void	terminate_threads(t_philosophers *p)
+{
+	static int check;
+	struct timeval	current_time;
+
+	pthread_mutex_lock(p->c);
+	gettimeofday(&current_time, NULL);
+	usleep(100);
+	check++;
+	if (check == 2)
+		printf("%ld %d is died\n", (current_time.tv_sec * 1000 + current_time.tv_usec / 1000), p->id);
+	pthread_mutex_unlock(p->c);
+}
 
 void	*routine(void *arg)
 {
@@ -62,28 +54,18 @@ void	*routine(void *arg)
 	static long		count;
 	static int		count_meals;
 	static int		check;
-	// static int		v;
 
 	if (p->id % 2 == 0)
 		usleep(30);
 	while (1)
 	{
-		if (check == 0)
-		{
 			pthread_mutex_lock(p->right_fork);
 			pthread_mutex_lock(p->left_fork);
 			gettimeofday(&current_time, NULL);
 			if (p->id % 2)
-			{
 				count = current_time.tv_sec * 1000 + current_time.tv_usec / 1000;
-				// printf("here\n");
-			}
-			// if (count_meals >= p->num_of_ph)
-			// 	count = current_time.tv_sec * 1000 + current_time.tv_usec / 1000;
 			if ((current_time.tv_sec * 1000 + current_time.tv_usec / 1000) - count > p->time_to_die)
 				check = 1;
-			// printf("check ==> %d id ==> %d meals ==> %d\n", check, p->id, count_meals);
-			// printf("count ==> %ld\n", (current_time.tv_sec * 1000 + current_time.tv_usec / 1000) - p->count);
 			if (check == 0)
 			{
 				is_eating(p->id, p->time_to_eat);
@@ -102,17 +84,8 @@ void	*routine(void *arg)
 					printf("%ld %d is thinking\n", (current_time.tv_sec * 1000 + current_time.tv_usec / 1000), p->id);
 				}
 			}
-		}
 		if (check == 1)
-		{
-			pthread_mutex_lock(p->c);
-			gettimeofday(&current_time, NULL);
-			usleep(200);
-			check++;
-			if (check == 2)
-				printf("%ld %d is died\n", (current_time.tv_sec * 1000 + current_time.tv_usec / 1000), p->id);
-			pthread_mutex_unlock(p->c);
-		}
+			terminate_threads(p);
 		if (check >= 1)
 			return (0);
 	}
