@@ -42,7 +42,7 @@ void	terminate_threads(t_philosophers *p)
 	gettimeofday(&current_time, NULL);
 	usleep(100);
 	check++;
-	if (check == 2)
+	if (check == 1)
 		printf("%ld %d is died\n", (current_time.tv_sec * 1000 + current_time.tv_usec / 1000), p->id);
 	pthread_mutex_unlock(p->c);
 }
@@ -67,7 +67,7 @@ void	*routine(void *arg)
 			check = 1;
 		if (check == 0 && p->id % 2)
 			count = current_time.tv_sec * 1000 + current_time.tv_usec / 1000;
-		// printf("count ==> %ld\n", count);
+		// printf("count ==> %ld id ==> %d\n", count, p->id);
 		if (check == 0)
 		{
 			gettimeofday(&current_time, NULL);
