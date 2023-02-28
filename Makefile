@@ -18,8 +18,9 @@ CFLAGS := -Wall -Wextra -Werror
 
 RM := rm -f
 
-SRC := philo.c \
+SRC := 	philo.c \
 		utils.c \
+		is_valid_argument.c
 
 
 OBJ := $(SRC:.c=.o)

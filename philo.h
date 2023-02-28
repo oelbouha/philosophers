@@ -46,5 +46,7 @@ typedef struct s_philosophers
 =========================================*
 */
 int	ft_atoi(char *str);
+int	ft_isdigit(int s);
+int	is_valid_argument(char **av);
 
 #endif

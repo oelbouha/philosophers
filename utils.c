@@ -12,6 +12,14 @@
 
 #include "philo.h"
 
+int	ft_isdigit(int s)
+{
+	if (!(s >= '0' && s <= '9'))
+		return (0);
+	else
+		return (1);
+}
+
 int	ft_atoi(char *str)
 {
 	unsigned int	res;
