@@ -22,10 +22,9 @@
 # include <sys/time.h>
 
 
-/*			    structures
-==========================================*
+/*			           structures
+===========================================================
 */
-
 
 typedef struct s_philosophers
 {
@@ -42,11 +41,15 @@ typedef struct s_philosophers
 	int					num_of_meals;
 }	t_philosophers;
 
-/*		   	      utils
-=========================================*
+/*		   	             functions
+===========================================================
 */
-int	ft_atoi(char *str);
-int	ft_isdigit(int s);
-int	is_valid_argument(char **av);
 
+int		ft_atoi(char *str);
+int		ft_isdigit(int s);
+int		is_valid_argument(char **av);
+int		check_argument(char **av, t_philosophers *p);
+void	terminate_threads(t_philosophers *p);
+void	one_philo(int time);
+void	is_sleeping(int id, int time_to_sleep);
 #endif

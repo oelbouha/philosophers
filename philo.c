@@ -12,15 +12,6 @@
 
 #include "philo.h"
 
-void	is_sleeping(int id, int time_to_sleep)
-{
-	struct timeval current_time;
-
-	gettimeofday(&current_time, NULL);
-	printf("%ld %d is sleeping\n", (current_time.tv_sec * 1000 + current_time.tv_usec / 1000), id);
-	usleep(time_to_sleep * 1000);
-}
-
 void	is_eating(int id, int time_to_eat)
 {
 	struct timeval current_time;
@@ -31,20 +22,6 @@ void	is_eating(int id, int time_to_eat)
 	printf("%ld %d is eating\n", (current_time.tv_sec * 1000 +
 		current_time.tv_usec / 1000), id);
 	usleep(time_to_eat * 1000);
-}
-
-void	terminate_threads(t_philosophers *p)
-{
-	static int check;
-	struct timeval	current_time;
-
-	pthread_mutex_lock(p->c);
-	gettimeofday(&current_time, NULL);
-	usleep(100);
-	check++;
-	if (check == 1)
-		printf("%ld %d is died\n", (current_time.tv_sec * 1000 + current_time.tv_usec / 1000), p->id);
-	pthread_mutex_unlock(p->c);
 }
 
 void	*routine(void *arg)
@@ -67,16 +44,9 @@ void	*routine(void *arg)
 			check = 1;
 		if (check == 0 && p->id % 2)
 			count = current_time.tv_sec * 1000 + current_time.tv_usec / 1000;
-		// printf("count ==> %ld id ==> %d\n", count, p->id);
 		if (check == 0)
 		{
-			gettimeofday(&current_time, NULL);
-			printf("%ld %d has taken a fork\n", (current_time.tv_sec * 1000 + current_time.tv_usec / 1000), p->id);
-			gettimeofday(&current_time, NULL);
-			printf("%ld %d is eating\n", (current_time.tv_sec * 1000 +
-				current_time.tv_usec / 1000), p->id);
-			usleep(p->time_to_eat * 1000);
-			// is_eating(p->id, p->time_to_eat);
+			is_eating(p->id, p->time_to_eat);
 			count_meals++;
 		}
 		pthread_mutex_unlock(p->right_fork);
@@ -139,34 +109,27 @@ void	create_threads(t_philosophers *p)
 			return ;
 }
 
-void	get_data(char **av)
+void	init(char **av)
 {
-	struct timeval current_time;
 	t_philosophers	p;
+	int				ret;
 
 	if (is_valid_argument(av))
 	{
 		printf("error\n");
 		return ;
 	}
-	p.num_of_ph = ft_atoi(av[1]);
-	p.time_to_die = ft_atoi(av[2]);
-	p.time_to_eat = ft_atoi(av[3]);
-	p.time_to_sleep = ft_atoi(av[4]);
-	if (av[5])
-		p.num_of_meals = ft_atoi(av[5]);
-	if (p.num_of_ph == 1)
-	{
-		gettimeofday(&current_time, NULL);
-		printf("%ld %d has taken a fork\n", (current_time.tv_sec * 1000 + current_time.tv_usec / 1000), 0);
-		usleep(p.time_to_die * 1000);
-		gettimeofday(&current_time, NULL);
-		printf("%ld %d died\n", (current_time.tv_sec * 1000 + current_time.tv_usec / 1000), 0);
-		return ;
-	}
-	if (p.time_to_die < 0 || p.time_to_eat < 0 || p.time_to_sleep < 0 || p.num_of_ph < 0)
+	ret = check_argument(av, &p);
+	if (ret == 1)
 	{
 		printf("error\n");
+		return ;
+	}
+	if (ret == 2)
+		return ;
+	if (p.num_of_ph == 1)
+	{
+		one_philo(p.time_to_die);
 		return ;
 	}
 	create_threads(&p);
@@ -175,7 +138,7 @@ void	get_data(char **av)
 int main(int c, char **av)
 {
 	if (c == 6 || c == 5)
-		get_data(av);
+		init(av);
 	else
 		return (1);
 }

@@ -47,3 +47,23 @@ int	is_valid_argument(char **av)
 	}
 	return (0);
 }
+
+int	check_argument(char **av, t_philosophers *p)
+{
+	p->num_of_ph = ft_atoi(av[1]);
+	p->time_to_die = ft_atoi(av[2]);
+	p->time_to_eat = ft_atoi(av[3]);
+	p->time_to_sleep = ft_atoi(av[4]);
+	if (av[5])
+	{
+		p->num_of_meals = ft_atoi(av[5]);
+		if (p->num_of_meals == 0)
+			return (2);
+		if (p->num_of_meals < 0)
+			return (1);
+	}
+	if (p->time_to_die < 0 || p->time_to_eat < 0 || p->time_to_sleep < 0
+		|| p->num_of_ph < 0)
+		return (1);
+	return (0);
+}
