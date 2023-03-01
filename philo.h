@@ -26,14 +26,25 @@
 ===========================================================
 */
 
+typedef struct s_data
+{
+	struct timeval	current_time;
+	int		count_meals;
+}t_data;
+
 typedef struct s_philosophers
 {
 	pthread_mutex_t 	*left_fork;
 	pthread_mutex_t 	*right_fork;
+	pthread_mutex_t		lock;
+	struct timeval		current_time;
 	pthread_mutex_t 	*c;
 	long				count;
 	int					id;
+	int					i;
+	int					j;
 	int					meals;
+	int					count_meals;
 	int					num_of_ph;
 	int					time_to_die;
 	int					time_to_eat;
