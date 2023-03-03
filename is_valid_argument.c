@@ -12,7 +12,7 @@
 
 #include "philo.h"
 
-int is_digit(char *str)
+int	is_digit(char *str)
 {
 	int	i;
 

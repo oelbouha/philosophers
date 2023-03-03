@@ -20,6 +20,25 @@ int	ft_isdigit(int s)
 		return (1);
 }
 
+void	init_mutex_forks(t_philosophers *p, pthread_mutex_t *forks)
+{
+	int		i;
+
+	i = -1;
+	while (++i < p->num_of_ph)
+		pthread_mutex_init(&forks[i], NULL);
+}
+
+void	wait_for_threads_to_fiish(t_philosophers *p, pthread_t *th)
+{
+	int		i;
+
+	i = -1;
+	while (++i < p->num_of_ph)
+		if (pthread_join(th[i], NULL) < 0)
+			return ;
+}
+
 int	ft_atoi(char *str)
 {
 	unsigned int	res;

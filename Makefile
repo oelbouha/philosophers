@@ -21,7 +21,8 @@ RM := rm -f
 SRC := 	philo.c \
 		utils.c \
 		is_valid_argument.c \
-		philo_routine.c
+		philo_routine.c \
+		create_threads.c
 
 
 OBJ := $(SRC:.c=.o)
