@@ -59,7 +59,7 @@ void	init(char **av)
 		return ;
 	}
 	ret = check_argument(av, &p);
-	if (ret == 1)
+	if (ret == 1 || p.num_of_ph > 200)
 	{
 		printf("error\n");
 		return ;
