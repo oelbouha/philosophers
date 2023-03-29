@@ -24,20 +24,28 @@ void	init_mutex_forks(t_philosophers *p, pthread_mutex_t *forks)
 {
 	int		i;
 
+	p->lock = malloc(sizeof(pthread_mutex_t));
+	p->eat = malloc(sizeof(pthread_mutex_t));
+	pthread_mutex_init(p->lock, NULL);
+	pthread_mutex_init(p->eat, NULL);
 	i = -1;
 	while (++i < p->num_of_ph)
 		pthread_mutex_init(&forks[i], NULL);
 }
 
-void	wait_for_threads_to_fiish(t_philosophers *p, pthread_t *th)
+void	destroy_mutex(t_philosophers *p, pthread_mutex_t *forks)
 {
-	int		i;
+	int	i;
 
 	i = -1;
 	while (++i < p->num_of_ph)
-		if (pthread_join(th[i], NULL) < 0)
-			return ;
+		pthread_mutex_destroy(&forks[i]);
+	pthread_mutex_destroy(p->lock);
+	pthread_mutex_destroy(p->eat);
+	free(p->lock);
+	free(p->eat);
 }
+
 
 int	ft_atoi(char *str)
 {

@@ -12,43 +12,7 @@
 
 #include "philo.h"
 
-void	eat_and_count_meals(int *check, t_philosophers *p, int *count_meals)
-{
-	if (*check == 0)
-		*count_meals = is_eating(p->id, p->time_to_eat);
-	if (*count_meals == p->meals * p->num_of_ph)
-		*check = 3;
-}
-
-void	manage_philosophers(t_philosophers *p, long time, t_data *data, int *check)
-{
-	static long		count;
-
-	count = time;
-	while (1)
-	{
-		pthread_mutex_lock(p->right_fork);
-		pthread_mutex_lock(p->left_fork);
-		gettimeofday(&data->current_time, NULL);
-		if (*check == 0 && (data->current_time.tv_sec * 1000
-				+ data->current_time.tv_usec / 1000) - count > p->time_to_die)
-			*check = 1;
-		if (*check == 0 && p->id % 2)
-			count = data->current_time.tv_sec * 1000
-				+ data->current_time.tv_usec / 1000;
-		eat_and_count_meals(check, p, &data->count_meals);
-		pthread_mutex_unlock(p->right_fork);
-		pthread_mutex_unlock(p->left_fork);
-		if (*check == 0)
-			is_sleeping(p->id, p->time_to_sleep);
-		if (*check == 0)
-			is_thinking(p->id);
-		if (*check != 0)
-			break ;
-	}
-}
-
-void	init(char **av)
+void	start(char **av)
 {
 	t_philosophers	p;
 	int				ret;
@@ -59,7 +23,7 @@ void	init(char **av)
 		return ;
 	}
 	ret = check_argument(av, &p);
-	if (ret == 1 || p.num_of_ph > 200)
+	if (ret == 1 || p.num_of_ph > 250)
 	{
 		printf("error\n");
 		return ;
@@ -77,7 +41,7 @@ void	init(char **av)
 int	main(int c, char **av)
 {
 	if (c == 6 || c == 5)
-		init(av);
+		start(av);
 	else
 		return (1);
 }

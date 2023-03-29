@@ -12,65 +12,43 @@
 
 #include "philo.h"
 
-void	terminate_threads(t_philosophers *p)
+void	ft_usleep(int time_to_sleep, long start)
 {
-	static int		check;
-	struct timeval	current_time;
-
-	pthread_mutex_lock(p->c);
-	gettimeofday(&current_time, NULL);
-	usleep(100);
-	check++;
-	if (check == 1)
-		printf("%ld %d is died\n", (current_time.tv_sec * 1000
-				+ current_time.tv_usec / 1000), p->id);
-	pthread_mutex_unlock(p->c);
+	while (1)
+	{
+		if (get_time() - start >= time_to_sleep)
+			break ;
+		usleep(200);
+	}
 }
 
 void	one_philo(int time)
 {
-	struct timeval	current_time;
-
-	gettimeofday(&current_time, NULL);
-	printf("%ld %d has taken a fork\n", (current_time.tv_sec * 1000
-			+ current_time.tv_usec / 1000), 0);
-	usleep(time * 1000);
-	gettimeofday(&current_time, NULL);
-	printf("%ld %d died\n", (current_time.tv_sec * 1000
-			+ current_time.tv_usec / 1000), 0);
+	printf("%ld %d has taken a fork\n", get_time(), 0);
+	ft_usleep(time, get_time());
+	printf("%ld %d died\n", get_time(), 0);
 }
 
 void	is_sleeping(int id, int time_to_sleep)
 {
-	struct timeval	current_time;
-
-	gettimeofday(&current_time, NULL);
-	printf("%ld %d is sleeping\n", (current_time.tv_sec * 1000
-			+ current_time.tv_usec / 1000), id);
-	usleep(time_to_sleep * 1000);
+	printf("%ld %d is sleeping\n", get_time(), id);
+	ft_usleep(time_to_sleep, get_time());
 }
 
-void	is_thinking(int id)
+int	is_eating(int id, int time_to_eat, t_philosophers *p)
 {
-	struct timeval	current_time;
+	static int			count_meals;
 
-	gettimeofday(&current_time, NULL);
-	printf("%ld %d is thinking\n", (current_time.tv_sec * 1000
-			+ current_time.tv_usec / 1000), id);
-}
-
-int	is_eating(int id, int time_to_eat)
-{
-	struct timeval	current_time;
-	static int		count_meals;
-
-	gettimeofday(&current_time, NULL);
-	printf("%ld %d has taken a fork\n", (current_time.tv_sec * 1000
-			+ current_time.tv_usec / 1000), id);
-	gettimeofday(&current_time, NULL);
-	printf("%ld %d is eating\n", (current_time.tv_sec * 1000
-			+ current_time.tv_usec / 1000), id);
-	usleep(time_to_eat * 1000);
+	usleep(100);
+	printf("%ld %d has taken a fork\n", get_time(), id);
+	printf("%ld %d is eating\n", get_time(), id);
+	ft_usleep(time_to_eat, get_time());
+	
+	pthread_mutex_lock(p->lock);
+	pthread_mutex_lock(p->eat);
 	count_meals++;
-	return (count_meals);
+	p->count_meals = count_meals;
+	pthread_mutex_unlock(p->eat);
+	pthread_mutex_unlock(p->lock);
+	return (0);
 }

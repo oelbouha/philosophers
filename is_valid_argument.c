@@ -63,7 +63,7 @@ int	check_argument(char **av, t_philosophers *p)
 			return (1);
 	}
 	if (p->time_to_die < 0 || p->time_to_eat < 0 || p->time_to_sleep < 0
-		|| p->num_of_ph < 0)
+		|| p->num_of_ph <= 0)
 		return (1);
 	return (0);
 }

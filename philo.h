@@ -35,13 +35,11 @@ typedef struct s_philosophers
 {
 	pthread_mutex_t		*left_fork;
 	pthread_mutex_t		*right_fork;
-	pthread_mutex_t		lock;
-	struct timeval		current_time;
-	pthread_mutex_t		*c;
+	pthread_mutex_t		*eat;
+	pthread_mutex_t		*lock;
 	long				count;
 	int					id;
 	int					i;
-	int					meals;
 	int					count_meals;
 	int					num_of_ph;
 	int					time_to_die;
@@ -62,10 +60,12 @@ void	wait_for_threads_to_fiish(t_philosophers *p, pthread_t *th);
 void	init_mutex_forks(t_philosophers *p, pthread_mutex_t *forks);
 void	one_philo(int time);
 void	is_sleeping(int id, int time_to_sleep);
-int		is_eating(int id, int time_to_eat);
+int		is_eating(int id, int time_to_eat, t_philosophers *p);
 void	is_thinking(int id);
 void	create_threads(t_philosophers *p);
 void	terminate_threads(t_philosophers *p);
 void	manage_philosophers(t_philosophers *p, long time, t_data *data, int *check);
+long	get_time(void);
+void	destroy_mutex(t_philosophers *p, pthread_mutex_t *forks);
 
 #endif
