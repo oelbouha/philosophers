@@ -43,12 +43,9 @@ int	is_eating(int id, int time_to_eat, t_philosophers *p)
 	printf("%ld %d has taken a fork\n", get_time(), id);
 	printf("%ld %d is eating\n", get_time(), id);
 	ft_usleep(time_to_eat, get_time());
-	
-	pthread_mutex_lock(p->lock);
 	pthread_mutex_lock(p->eat);
 	count_meals++;
 	p->count_meals = count_meals;
 	pthread_mutex_unlock(p->eat);
-	pthread_mutex_unlock(p->lock);
 	return (0);
 }

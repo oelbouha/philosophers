@@ -45,7 +45,6 @@ void	*routine(void *arg)
 	return (NULL);
 }
 
-
 int	check_death(t_philosophers *philo, t_philosophers *p)
 {
 	int i;
