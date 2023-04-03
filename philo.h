@@ -16,20 +16,13 @@
 # include <stdio.h>
 # include <stdlib.h>
 # include <unistd.h>
-# include <string.h>
 # include <stdlib.h>
 # include <pthread.h>
 # include <sys/time.h>
 
-/*			           structures
+/*			           structure
 ===========================================================
 */
-
-typedef struct s_data
-{
-	struct timeval	current_time;
-	int				count_meals;
-}	t_data;
 
 typedef struct s_philosophers
 {
@@ -59,12 +52,9 @@ int		check_argument(char **av, t_philosophers *p);
 void	wait_for_threads_to_fiish(t_philosophers *p, pthread_t *th);
 void	init_mutex_forks(t_philosophers *p, pthread_mutex_t *forks);
 void	one_philo(int time);
-void	is_sleeping(int id, int time_to_sleep);
-int		is_eating(int id, int time_to_eat, t_philosophers *p);
-void	is_thinking(int id);
+void	is_sleeping(int id, int time_to_sleep, t_philosophers *p);
+void	is_eating(int id, int time_to_eat, t_philosophers *p);
 void	create_threads(t_philosophers *p);
-void	terminate_threads(t_philosophers *p);
-void	manage_philosophers(t_philosophers *p, long time, t_data *data, int *check);
 long	get_time(void);
 void	destroy_mutex(t_philosophers *p, pthread_mutex_t *forks);
 

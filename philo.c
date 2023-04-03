@@ -6,7 +6,7 @@
 /*   By: oelbouha <oelbouha@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/13 20:10:01 by oelbouha          #+#    #+#             */
-/*   Updated: 2023/02/23 14:35:33 by oelbouha         ###   ########.fr       */
+/*   Updated: 2023/04/03 22:44:14 by oelbouha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,11 +30,6 @@ void	start(char **av)
 	}
 	if (ret == 2)
 		return ;
-	if (p.num_of_ph == 1)
-	{
-		one_philo(p.time_to_die);
-		return ;
-	}
 	create_threads(&p);
 }
 

@@ -6,7 +6,7 @@
 /*   By: oelbouha <oelbouha@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/17 19:41:22 by oelbouha          #+#    #+#             */
-/*   Updated: 2023/02/17 19:41:24 by oelbouha         ###   ########.fr       */
+/*   Updated: 2023/04/03 22:44:37 by oelbouha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,8 +24,9 @@ void	init_mutex_forks(t_philosophers *p, pthread_mutex_t *forks)
 {
 	int		i;
 
-	p->lock = malloc(sizeof(pthread_mutex_t));
 	p->eat = malloc(sizeof(pthread_mutex_t));
+	if (!p->eat)
+		return ;
 	pthread_mutex_init(p->lock, NULL);
 	pthread_mutex_init(p->eat, NULL);
 	i = -1;
@@ -40,12 +41,9 @@ void	destroy_mutex(t_philosophers *p, pthread_mutex_t *forks)
 	i = -1;
 	while (++i < p->num_of_ph)
 		pthread_mutex_destroy(&forks[i]);
-	pthread_mutex_destroy(p->lock);
 	pthread_mutex_destroy(p->eat);
-	free(p->lock);
 	free(p->eat);
 }
-
 
 int	ft_atoi(char *str)
 {

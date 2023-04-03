@@ -6,7 +6,7 @@
 /*   By: oelbouha <oelbouha@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/28 12:55:50 by oelbouha          #+#    #+#             */
-/*   Updated: 2023/02/28 12:55:52 by oelbouha         ###   ########.fr       */
+/*   Updated: 2023/04/03 22:44:25 by oelbouha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,30 +22,24 @@ void	ft_usleep(int time_to_sleep, long start)
 	}
 }
 
-void	one_philo(int time)
+void	is_sleeping(int id, int time_to_sleep, t_philosophers *p)
 {
-	printf("%ld %d has taken a fork\n", get_time(), 0);
-	ft_usleep(time, get_time());
-	printf("%ld %d died\n", get_time(), 0);
-}
-
-void	is_sleeping(int id, int time_to_sleep)
-{
+	pthread_mutex_lock(p->eat);
 	printf("%ld %d is sleeping\n", get_time(), id);
+	pthread_mutex_unlock(p->eat);
 	ft_usleep(time_to_sleep, get_time());
 }
 
-int	is_eating(int id, int time_to_eat, t_philosophers *p)
+void	is_eating(int id, int time_to_eat, t_philosophers *p)
 {
 	static int			count_meals;
 
-	usleep(100);
-	printf("%ld %d has taken a fork\n", get_time(), id);
+	pthread_mutex_lock(p->eat);
 	printf("%ld %d is eating\n", get_time(), id);
+	pthread_mutex_unlock(p->eat);
 	ft_usleep(time_to_eat, get_time());
 	pthread_mutex_lock(p->eat);
 	count_meals++;
 	p->count_meals = count_meals;
 	pthread_mutex_unlock(p->eat);
-	return (0);
 }
