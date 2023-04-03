@@ -15,10 +15,13 @@
 
 # include <stdio.h>
 # include <stdlib.h>
+# include <string.h>
 # include <unistd.h>
 # include <stdlib.h>
 # include <pthread.h>
 # include <sys/time.h>
+
+# define INT_MAX 2147483647
 
 /*			           structure
 ===========================================================
@@ -45,7 +48,7 @@ typedef struct s_philosophers
 ===========================================================
 */
 
-int		ft_atoi(char *str);
+long	ft_atoi(char *str);
 int		ft_isdigit(int s);
 int		is_valid_argument(char **av);
 int		check_argument(char **av, t_philosophers *p);

@@ -27,7 +27,6 @@ void	init_mutex_forks(t_philosophers *p, pthread_mutex_t *forks)
 	p->eat = malloc(sizeof(pthread_mutex_t));
 	if (!p->eat)
 		return ;
-	pthread_mutex_init(p->lock, NULL);
 	pthread_mutex_init(p->eat, NULL);
 	i = -1;
 	while (++i < p->num_of_ph)
@@ -45,9 +44,9 @@ void	destroy_mutex(t_philosophers *p, pthread_mutex_t *forks)
 	free(p->eat);
 }
 
-int	ft_atoi(char *str)
+long	ft_atoi(char *str)
 {
-	unsigned int	res;
+	unsigned long	res;
 	int				sign;
 	int				i;
 
@@ -69,5 +68,7 @@ int	ft_atoi(char *str)
 		i++;
 	}
 	res *= sign;
+	if (res > INT_MAX)
+		return (-1);
 	return (res);
 }

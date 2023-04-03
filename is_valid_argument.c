@@ -52,6 +52,7 @@ int	check_argument(char **av, t_philosophers *p)
 {
 	p->num_of_ph = ft_atoi(av[1]);
 	p->time_to_die = ft_atoi(av[2]);
+	printf("res %d\n", p->time_to_die);
 	p->time_to_eat = ft_atoi(av[3]);
 	p->time_to_sleep = ft_atoi(av[4]);
 	if (av[5])
